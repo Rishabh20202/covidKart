@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Covid-19 Symptom Checker</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Admin area</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <style>
+   /* Containers */
+   html {
+     background-color: #E4E9FD;
+     background-image: -webkit-linear-gradient(65deg, #A683E3 50%, #E4E9FD 50%);
+     min-height: 1000px;
+     font-family: 'helvetica neue';
+       min-height: 100%;
+   }
+ body {
+  min-height: 100%;
+}
+
+body {
+  font-family: sans-serif;
+
+  color: rgba(255,255,255,.5);
+}
+
+.rb-box {
+  width: 80%;
+  max-width: 620px;
+  margin: 50px auto;
+  padding: 1.3em;
+  background: #292942;
+  border-radius: .75em;
+  -webkit-filter: drop-shadow(1px 2px 5px rgba(0,0,0,.3));
+  filter: drop-shadow(1px 2px 5px rgba(0,0,0,.3));
+
+}
+
+/* Custom Radio Button */
+p {
+  font-size: .9em;
+}
+
+.rb {
+  padding: 16px 0;
+  text-align: center;
+  border-radius: .3em;
+}
+
+.rb-tab {
+  display: inline-block;
+  position: relative;
+  width: 20%;
+}
+
+.rb-txt {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: .5em;
+  color: #FFFFFF;
+}
+
+.rb-spot {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  border: 2px solid rgba(255,255,255,.3);
+  border-radius: 100%;
+  cursor: pointer;
+  transition: ease .5s;
+}
+
+.rb-tab-active .rb-spot {
+  background: rgba(0,0,0,.35);
+  border: 2px solid rgba(243,49,128,.6);
+}
+
+/* Submit Button */
+.button-box {
+  padding: 10px 0;
+  text-align: center;
+}
+
+button {
+  display: inline-block;
+  width: 80%;
+  margin-top: 1.2em;
+  padding: 1em;
+  max-width: 220px;
+  font-size: .9em;
+  color: #D42D78;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: .15em;
+  background: white;
+  border: none;
+  outline: none;
+  border-radius: 5em;
+  box-shadow: 0 15px 20px -10px rgba(0, 0, 0, 0.3);
+  transition:
+    color 0.6s,
+    box-shadow 0.3s,
+    transform 0.3s;
+  cursor: pointer;
+}
+
+button:hover {
+  box-shadow: 0 3px 5px -5px rgba(0, 0, 0, 0.3);
+  color: #6f6f6f;
+}
+ </style>
+
+</head>
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark style="position: sticky;">
+    <a class="navbar-brand" href="#">Covidcart</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Volunteers</a>
+          <div class="dropdown-menu" aria-labelledby="dropdown01">
+            <% pages.forEach(function(page){ %>
+                      <% if (page.slug == "home") { %>
+            <a class="dropdown-item" href="/"><%= page.title %></a>
+                 <% } else {%>
+            <a class="dropdown-item" href="/<%= page.slug %>"><%= page.title %></a>
+            <% } %>
+         <% }); %>
+
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/test/test">Symptom Checker</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/maps/locator">Hospital Locator</a>
+        </li>
+
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+          <li>
+              <a class="nav-link" href="/cart/checkout">My Cart (
+                  <% if (typeof cart !== "undefined") { %>
+                  <%= cart.length %>
+                  <% } else {%>
+                  0
+                  <% } %>
+              )</a>
+          </li>
+          <% if (user) { %>
+          <li><a class="nav-link" href="/users/logout">Hi, <%= user.username %> ( logout )</a></li>
+          <% } else {%>
+          <li><a class="nav-link" href="/users/register">Register</a></li>
+          <li><a class="nav-link" href="/users/login">Log in</a></li>
+          <% } %>
+          <% if (user && user.admin == 1) { %>
+          <li><a class="nav-link" href="/admin/pages">Admin Area</a></li>
+          <% }%>
+        </ul>
+    </div>
+  </nav>
+
+<!-- partial:index.partial.html -->
+<div class="rb-box">
+<center><h1> COVID-19 SYMPTOM CHECKER </h1></center>
+  <!-- Radio Button Module -->
+  <p>(1) Have you been at risk of exposure to COVID-19 by experiencing any of the following? <br>
+		• Traveled to an area of high-risk for COVID-19 <br>
+		• Been around someone who recently traveled to an area of high-risk and is also sick <br>
+		• Been come into close contact (within 6 feet) with someone who has a laboratory confirmed COVID – 19 diagnosis in the past 14 days?</p>
+  <div id="rb-1" class="rb">
+    <div class="rb-tab " data-value="yes">
+      <div class="rb-spot">
+        <span class="rb-txt">YES</span>
+      </div>
+    </div><div class="rb-tab" data-value="no">
+      <div class="rb-spot">
+        <span class="rb-txt">NO</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Radio Button Module -->
+  <p>(2) Do you think you have any of the following: fever or chills, cough, body aches, headache, new loss of taste or smell, sore throat?</p>
+  <div id="rb-2" class="rb">
+    <div class="rb-tab" data-value="yes">
+      <div class="rb-spot">
+        <span class="rb-txt">YES</span>
+      </div>
+    </div><div class="rb-tab " data-value="no">
+      <div class="rb-spot">
+        <span class="rb-txt">NO</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Radio Button Module -->
+  <p> (3) Are you feeling mild to moderate shortness of breath or mild to moderate difficulty breathing?</p>
+  <div id="rb-3" class="rb">
+    <div class="rb-tab" data-value="yes">
+      <div class="rb-spot">
+        <span class="rb-txt">YES</span>
+      </div>
+    </div><div class="rb-tab" data-value="no">
+      <div class="rb-spot">
+        <span class="rb-txt">NO</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Radio Button Module -->
+  <p>(4) COVID-19 can affect the elderly more seriously than others. Are you older than 50 years?</p>
+  <div id="rb-4" class="rb">
+    <div class="rb-tab" data-value="yes">
+      <div class="rb-spot">
+        <span class="rb-txt">YES</span>
+      </div>
+    </div><div class="rb-tab" data-value="no">
+      <div class="rb-spot">
+        <span class="rb-txt">NO</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Radio Button Module -->
+  <p>(5) COVID-19 can affect people who have weaker immune systems from things like chemotherapy, HIV/AIDS, organ transplant, being pregnant, or prolonged steroid use.Do you have a weakened immune system from a known cause?</p>
+  <div id="rb-5" class="rb">
+    <div class="rb-tab" data-value="4">
+      <div class="rb-spot">
+        <span class="rb-txt">YES</span>
+      </div>
+    </div><div class="rb-tab" data-value="2">
+      <div class="rb-spot">
+        <span class="rb-txt">NO</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Button -->
+  <div class="button-box">
+    <button class="button trigger">Submit</button>
+  </div>
+
+</div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+  <p class="text-center">&COPY; covidcart</p>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+<script>var survey = [];
+
+//Switcher function:
+$(".rb-tab").click(function(){
+  //Spot switcher:
+  $(this).parent().find(".rb-tab").removeClass("rb-tab-active");
+  $(this).addClass("rb-tab-active");
+});
+
+//Save data:
+$(".trigger").click(function(){
+  //Empty array:
+  survey = [];
+  //Push data:
+   var rbValue1 = $("#rb-1").find(".rb-tab-active").attr("data-value");
+    if(rbValue1=="yes"){
+    //Bidimensional array push:
+    survey.push(["Because you have had possible exposure to the virus, you may have COVID-19 even if you're not showing symptoms. It is best if you isolate yourself at home and away from others for at least 14 days.Try to keep at least 6 feet (1.8 m) away from other people."]);
+    };
+  var rbValue2 = $("#rb-2").find(".rb-tab-active").attr("data-value");
+  var rbValue3 = $("#rb-3").find(".rb-tab-active").attr("data-value");
+    if(rbValue2=="yes" || rbValue3=="yes"){
+      survey.push(["Your symptoms could be contagious, and you should take precautions to not spread germs that can get others sick.Rush to the hospital immediately!"]);
+    };
+  var rbValue4 = $("#rb-4").find(".rb-tab-active").attr("data-value");
+  if(rbValue4=="yes"){
+  survey.push(["Due to your age or underlying conditions, COVID-19 may affect you more seriously than others, and you should take every measure to avoid catching it or get treatment immediately if you notice symptoms."]);
+  };
+  var rbValue5 = $("#rb-4").find(".rb-tab-active").attr("data-value");
+  if(rbValue5=="yes"){
+  survey.push(["Due to your underlying medical conditions or weakened immune system,you might be at higher risk for severe illness from COVID-19."]);
+  };
+  //Debug:
+  debug();
+});
+
+//Debug:
+function debug(){
+  var debug = "";
+  for (i=0; i<survey.length; i++) {
+    debug +=  survey[i]+ "\n";
+  };
+  alert(debug);
+};</script>
+
+</body>
+</html>
